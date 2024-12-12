@@ -1,5 +1,5 @@
-#ifndef TRACE_FRAG
-#define TRACE_FRAG
+#ifndef MARCH_FRAG
+#define MARCH_FRAG
 
 #include "common.frag"
 
@@ -18,11 +18,11 @@ vec3 get_normal(vec3 p) {
                    k.xxx * MAP(p + k.xxx * h).x);
 }
 
-Hit trace(Ray ray, float near, float far, float step_size, int step_count) {
+Hit march(Ray ray, float near, float far, float step_size, int step_count) {
   Hit hit;
   hit.id = -1.0;
   float t = near;
-  for (int i = 0; i < step_count; i++) {
+  for (int i = 0; i < step_count && t < far; i++) {
     vec3 p = ray.origin + ray.direction * t;
     vec2 d = MAP(p);
     if (d.x < EPSILON) {
@@ -32,9 +32,22 @@ Hit trace(Ray ray, float near, float far, float step_size, int step_count) {
       break;
     }
     t += step_size * d.x;
-    if (t > far) { break; }
   }
   return hit;
 }
 
-#endif // TRACE_FRAG
+float soft_shadow(Ray ray, float near, float far, int step_count) {
+  float ret = 1.0;
+  float t = near;
+  for (int i = 0; i < step_count && t < far; i++) {
+	  vec3 p = ray.origin + ray.direction * t;
+    vec2 d = MAP(p);
+    ret = min(ret, 10.0 * d.x / t);
+    if (ret < EPSILON) break;
+    t += d.x;
+  }
+  ret = clamp(ret, 0.0, 1.0);
+  return ret * ret * (3.0 - 2.0 * ret);
+}
+
+#endif // MARCH_FRAG

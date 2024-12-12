@@ -3,6 +3,8 @@
 
 // https://iquilezles.org/articles/distfunctions/
 
+// CAPSULE
+
 float sd_capsule(vec3 p, float r, float h) {
   p.y -= clamp(p.y, 0.0, h);
   return length(p) - r;
@@ -14,6 +16,21 @@ float sd_capsule(vec3 p, vec3 a, vec3 b, float r) {
   return length(pa - ba * h) - r;
 }
 
+float sd_capsule(vec3 p, float r1, float r2, float h) {
+  float b = (r1 - r2) / h;
+  float a = sqrt(1.0 - b * b);
+  vec2 q = vec2(length(p.xz), p.y);
+  float k = dot(q, vec2(-b, a));
+  if (k < 0.0) return length(q) - r1;
+  if (k > a * h) return length(q - vec2(0.0, h)) - r2;
+  return dot(q, vec2(a, b)) - r1;
+}
+
+float sd_cylinder(vec3 p, float r, float h) {
+  vec2 d = vec2(length(p.xz) - r, abs(p.y) - h);
+  return min(max(d.x, d.y), 0.0) + length(max(d, 0.0));
+}
+
 float sd_torus(vec3 p, float R, float r) {
   vec2 q = vec2(length(p.xz) - R, p.y);
   return length(q)- r;
@@ -21,11 +38,6 @@ float sd_torus(vec3 p, float R, float r) {
 
 float sd_sphere(vec3 p, float r) {
   return length(p) - r;
-}
-
-float sd_cylinder(vec3 p, float r, float h) {
-  vec2 d = vec2(length(p.xz) - r, abs(p.y) - h);
-  return min(max(d.x, d.y), 0.0) + length(max(d, 0.0));
 }
 
 float sd_box(vec2 p, vec2 b) {

@@ -44,7 +44,7 @@ vec2 map(vec3 p) {
   return vec2(ret, 0.0);
 }
 
-#include "common/trace.frag"
+#include "common/march.frag"
 
 void mainImage(out vec4 out_color, in vec2 in_position) {
   vec2 uv = (2.0 * in_position - iResolution.xy) / iResolution.x;
@@ -54,7 +54,7 @@ void mainImage(out vec4 out_color, in vec2 in_position) {
   ray.origin = vec3(0.0, 100.5, 200.0);
   ray.direction = normalize(vec3(uv, -1.0));
 
-  Hit hit = trace(ray, 0.0, FAR, STEP_SIZE, STEP_COUNT);
+  Hit hit = march(ray, 0.0, FAR, STEP_SIZE, STEP_COUNT);
 
   vec3 LD = normalize(vec3(1.0));
 

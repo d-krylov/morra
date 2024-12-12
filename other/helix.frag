@@ -1,6 +1,10 @@
 #include "common/distance.frag"
 #include "common/common.frag"
 
+#define STEP_SIZE    0.5
+#define STEP_COUNT   500
+#define FAR          250.0
+
 #define MAP(x) map(x)
 
 float sd_torus_helix(vec3 p, float order, float wraps, float R, float r, float thickness) {
@@ -29,7 +33,7 @@ vec2 map(vec3 p) {
 
 
 
-#include "common/trace.frag"
+#include "common/march.frag"
 
 void mainImage(out vec4 out_color, in vec2 in_position) {
   vec2 uv = (2.0 * in_position - iResolution.xy) / iResolution.xy;
@@ -40,7 +44,7 @@ void mainImage(out vec4 out_color, in vec2 in_position) {
   ray.origin = vec3(0.0, 0.0, 12.0);
   ray.direction = normalize(vec3(uv, -1.0));
 
-  Hit hit = trace(ray, 0.0, 0.1);
+  Hit hit = march(ray, 0.0, FAR, STEP_SIZE, STEP_COUNT);
 
   if (hit.id != -1.0) {
     color = vec3(0.5, 0.5, 0.8);

@@ -11,17 +11,26 @@ struct Ray {
 };
 
 struct Hit {
-  float id;
-  float t;
-  vec3 position;
+  float id, t;
   vec3 normal;
+  vec3 position;
 };
 
 struct Material {
   vec3 albedo;
+  vec3 emissive;
+  vec3 specular;
   float metallic;
   float roughness;
 };
+
+Material make_material(vec3 albedo, float metallic, float roughness) {
+  return Material(albedo, vec3(0.0), albedo, metallic, roughness);
+}
+
+Material make_emissive_material(vec3 emissive) {
+  return Material(vec3(0.0), emissive, vec3(0.0), 0.0, 0.0);
+}
 
 // TOOLS
 
@@ -37,12 +46,6 @@ mat2 rotate_tangent(float atg) {
   float sn = atg / sqrt(1.0 + atg * atg);
   float cs = 1.0 / sqrt(1.0 + atg * atg);
   return mat2(cs, sn, -sn, cs);
-}
-
-vec3 get_texture(sampler2D s, vec3 p, vec3 n) {
-  return texture(s, p.xy).xyz * abs(n.z) +
-         texture(s, p.xz).xyz * abs(n.y) +
-         texture(s, p.zy).xyz * abs(n.x); 
 }
 
 float repeat_angle(vec2 p, float n) {
@@ -68,6 +71,58 @@ float smin(float a, float b, float k) {
   k *= 2.0;
   float x = b - a;
   return 0.5 * (a + b - sqrt(x * x + k * k));
+}
+
+// MATRICES
+
+mat4 rotate_x(float phi) {
+  float Sin = sin(phi), Cos = cos(phi);
+  return mat4(
+    1.0,  0.0, 0.0, 0.0,
+    0.0,  Cos, Sin, 0.0,
+    0.0, -Sin, Cos, 0.0,
+    0.0,  0.0, 0.0, 1.0);
+}
+
+mat4 rotate_y(float phi) {
+  float Sin = sin(phi), Cos = cos(phi);
+  return mat4(
+    Cos, 0.0, Sin, 0.0, 
+    0.0, 1.0, 0.0, 0.0, 
+   -Sin, 0.0, Cos, 0.0, 
+    0.0, 0.0, 0.0, 1.0);
+}
+
+mat4 translate(float p_x, float p_y, float p_z) {
+  return mat4(
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 
+    0.0, 0.0, 1.0, 0.0, 
+    p_x, p_y, p_z, 1.0);
+}
+
+mat4 scale(float s_x, float s_y, float s_z) {
+  return mat4(
+    s_x, 0.0, 0.0, 0.0,
+    0.0, s_y, 0.0, 0.0, 
+    0.0, 0.0, s_z, 0.0, 
+    0.0, 0.0, 0.0, 1.0);
+}
+
+Ray transform_ray(Ray ray, mat4 m) {
+  vec4 origin = inverse(m) * vec4(ray.origin, 1.0);
+  vec4 direction = inverse(m) * vec4(ray.direction, 0.0);
+  return Ray(origin.xyz, direction.xyz);
+}
+
+vec3 transform_normal(vec3 normal, mat4 m) {
+  vec4 n = transpose(inverse(m)) * vec4(normal, 0.0); 
+  return normalize(n.xyz);
+}
+
+vec3 transform_point(vec3 point, mat4 m) {
+  vec4 p = m * vec4(point, 1.0);
+  return p.xyz;
 }
 
 vec3 fibonacci_lattice(float i, float count) {
