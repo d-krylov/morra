@@ -1,5 +1,6 @@
 #include "common/common.frag"
 #include "common/distance.frag"
+#include "common/texture.frag"
 #iChannel0 "assets/brick.jpg"
 #iChannel1 "assets/ground.jpg"
 
@@ -115,7 +116,7 @@ vec3 get_material(Hit hit) {
   if (hit.id == YARD_ID) {
     color = texture(iChannel0, 0.5 * hit.position.xz).rgb;
   } else if (hit.id == ROOM_ID) {
-    color = get_texture(iChannel1, 0.1 * hit.position, hit.normal).rgb;
+    color = get_texture(iChannel1, 0.1 * hit.position, hit.normal, 1.0).rgb;
   } else if (hit.id == WINDOW_ID) {
     color = vec3(0.1);
   } else {

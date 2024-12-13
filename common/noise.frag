@@ -5,7 +5,7 @@
 // https://iquilezles.org/articles/gradientnoise/
 // https://iquilezles.org/articles/morenoise/
 
-#include "hash.frag"
+#include "random.frag"
 
 #ifndef HASH
 #define HASH(p) hash(p)

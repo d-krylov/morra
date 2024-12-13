@@ -12,25 +12,10 @@ struct Ray {
 
 struct Hit {
   float id, t;
+  bool inside;
   vec3 normal;
   vec3 position;
 };
-
-struct Material {
-  vec3 albedo;
-  vec3 emissive;
-  vec3 specular;
-  float metallic;
-  float roughness;
-};
-
-Material make_material(vec3 albedo, float metallic, float roughness) {
-  return Material(albedo, vec3(0.0), albedo, metallic, roughness);
-}
-
-Material make_emissive_material(vec3 emissive) {
-  return Material(vec3(0.0), emissive, vec3(0.0), 0.0, 0.0);
-}
 
 // TOOLS
 

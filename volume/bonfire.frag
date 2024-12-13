@@ -28,6 +28,7 @@ vec3 environment(Ray ray, float step_count, float near, float far) {
   return color;
 }
 
+
 void mainImage(out vec4 out_color, in vec2 in_position) {
   vec2 uv = (2.0 * in_position - iResolution.xy) / iResolution.xy;
   uv.y *= iResolution.y / iResolution.x;

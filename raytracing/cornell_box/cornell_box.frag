@@ -1,5 +1,6 @@
 #include "common/intersection.frag"
-#include "common/hash.frag"
+#include "common/random.frag"
+#include "common/material.frag"
 #iChannel0 "cornell_box.frag"
 
 #iChannel1 "assets/forest/forest_{}.png"
@@ -69,18 +70,18 @@ vec3 raytrace(Ray ray, int bounces, inout uint seed) {
 
     Material material = get_material(hit);
         
-    float do_specular = (random(seed) < material.metallic) ? 1.0 : 0.0;
+    float do_specular = (random(seed) < material.reflection.chance) ? 1.0 : 0.0;
 
     vec3 diffuse_ray = normalize(hit.normal + random_unit_vector(seed));
     vec3 specular_ray = reflect(ray.direction, hit.normal);
 
-    specular_ray = normalize(mix(specular_ray, diffuse_ray, material.roughness * material.roughness));
+    specular_ray = normalize(mix(specular_ray, diffuse_ray, material.reflection.roughness *  material.reflection.roughness));
 
     ray.origin = hit.position + hit.normal * 0.01;
     ray.direction = mix(diffuse_ray, specular_ray, do_specular);
         
     result += material.emissive * throughput;
-    throughput *= mix(material.albedo, material.specular, do_specular);     
+    throughput *= mix(material.albedo, material.reflection.color, do_specular);     
   }
  
   return result;
@@ -97,7 +98,7 @@ void mainImage(out vec4 out_color, in vec2 in_position) {
   ray.origin = vec3(0.0, 0.0, 30.0);
   ray.direction = normalize(vec3(uv, -0.9));
     
-  int samples = 4;
+  int samples = 2;
 
   for (int i = 0; i < samples; ++i) {
     color += raytrace(ray, 8, seed) / float(samples);
