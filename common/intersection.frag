@@ -26,7 +26,7 @@ Hit box_intersect_internal(Ray ray, vec3 size, float id) {
   vec3 t1, t2; box_intersect_internal(ray, vec3(0.0), size, t1, t2);
   float tn = max(max(t1.x, t1.y), t1.z);
   float tf = min(min(t2.x, t2.y), t2.z);
-	if (tn > tf || tf < 0.0) return hit;
+  if (tn > tf || tf < 0.0) return hit;
   hit.inside = tn < 0.0; hit.t = hit.inside ? tf : tn; 
   hit.id = id; hit.position = ray.origin + ray.direction * hit.t; 
   hit.normal = -sign(ray.direction) * step(t1.yzx, t1.xyz) * step(t1.zxy, t1.xyz);

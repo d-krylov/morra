@@ -11,6 +11,10 @@
 #define HASH(p) hash(p)
 #endif
 
+#ifndef NOISE
+#define NOISE(p) noise(p)
+#endif
+
 float noise(vec2 x) {
   vec2 i = floor(x);
   vec2 f = fract(x);
@@ -100,7 +104,7 @@ float fbm(vec2 x, float H, int octaves) {
   float a = 1.0;
   float t = 0.0;
   for (int i = 0; i < octaves; i++) {
-    t += a * noise(f * x);
+    t += a * NOISE(f * x);
     f *= 2.0;
     a *= G;
   }

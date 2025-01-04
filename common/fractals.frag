@@ -1,0 +1,6 @@
+#ifndef FRACTALS_FRAG
+#define FRACTALS_FRAG
+
+
+
+#endif // FRACTALS_FRAG

@@ -19,14 +19,15 @@ vec3 get_normal(vec3 p) {
 }
 
 Hit march(Ray ray, float near, float far, float step_size, int step_count) {
-  Hit hit;
+  Hit hit; 
   hit.id = -1.0;
   float t = near;
   for (int i = 0; i < step_count && t < far; i++) {
     vec3 p = ray.origin + ray.direction * t;
     vec2 d = MAP(p);
     if (d.x < EPSILON) {
-      hit.id = d.y;
+      hit.t = t;
+      hit.id = d.y; 
       hit.position = p; 
       hit.normal = get_normal(hit.position);
       break;

@@ -29,6 +29,35 @@ float fresnel_reflect_amount(float n1, float n2, vec3 normal, vec3 ray_direction
   return mix(f0, f90, result);
 }
 
+float fresnel_schlick(float u, float f0, float f90) {
+  return f0 + (f90 - f0) * pow(1.0 - u, 5.0);
+}
+
+float fd_burley(float linear_roughness, float NdotV, float NdotL, float LdotH) {
+  float f90 = 0.5 + 2.0 * linear_roughness * LdotH * LdotH;
+  float light_scatter = fresnel_schlick(1.0, f90, NdotL);
+  float view_scatter  = fresnel_schlick(1.0, f90, NdotV);
+  return light_scatter * view_scatter / PI;
+}
+
+float trowbridge_reitz_ndf(float NdotH, float roughness) {
+  roughness *= roughness; 
+  float distribution = NdotH * NdotH * (roughness - 1.0) + 1.0;
+  return roughness / (PI * distribution * distribution);
+}
+
+float smith_ggx_correlated(float NdotV, float NdotL, float roughness) {
+  float a2 = roughness * roughness;
+  float ggxv = NdotL * sqrt(NdotV * NdotV * (1.0 - a2) + a2);
+  float ggxl = NdotV * sqrt(NdotL * NdotL * (1.0 - a2) + a2);
+  return 0.5 / (ggxv + ggxl);
+}
+
+
+vec3 get_light() {
+  return vec3(0.0);
+}
+
 
 
 #endif // LIGHT_FRAG

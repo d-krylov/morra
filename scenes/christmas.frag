@@ -51,8 +51,8 @@ vec2 map(vec3 p) {
   vec2 ret = terrain(p);
   vec2 home = home(p, 10.0, 4.0);
   vec2 snowman = snowman(p - vec3(-10.0, 0.0, 15.0), 1.0);
-  ret = MIN(ret, home);
-  ret = MIN(ret, snowman);
+  ret = min_object(ret, home);
+  ret = min_object(ret, snowman);
   return ret;
 }
 

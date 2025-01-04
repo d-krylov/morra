@@ -11,7 +11,7 @@ struct Ray {
 };
 
 struct Hit {
-  float id, t;
+  float t, id;
   bool inside;
   vec3 normal;
   vec3 position;
@@ -19,8 +19,21 @@ struct Hit {
 
 // TOOLS
 
-vec2 MIN(vec2 p, vec2 q) {
+vec2 min_object(vec2 p, vec2 q) {
   return (p.x < q.x) ? p : q;
+}
+
+// https://iquilezles.org/articles/smin/
+
+float smin_root(float a, float b, float k) {
+  float x = b - a;
+  return 0.5 * (a + b - sqrt(x * x + 4.0 * k * k));
+}
+
+float smin_quadratic(float a, float b, float k) {
+  float m = 4.0 * k;
+  float h = max(m - abs(a - b), 0.0) / m;
+  return min(a, b) - h * h * k;
 }
 
 mat2 rotate(float a) {
@@ -33,6 +46,12 @@ mat2 rotate_tangent(float atg) {
   return mat2(cs, sn, -sn, cs);
 }
 
+float get_angle_id(vec2 p, float n) {
+  float sp = 2.0 * PI / n;
+  float an = atan(p.y, p.x);
+  return floor(an / sp);
+}
+
 float repeat_angle(vec2 p, float n) {
   float sp = 2.0 * PI / n;
   float an = atan(p.y, p.x);
@@ -40,22 +59,10 @@ float repeat_angle(vec2 p, float n) {
   return sp * id;
 }
 
-float get_angle_id(vec2 p, float n) {
-  float sp = 2.0 * PI / n;
-  float an = atan(p.y, p.x);
-  return floor(an / sp);
-}
-
 vec2 rotate(vec2 p, float a) {
   float c = cos(a);
   float s = sin(a);
   return vec2(p.x * c - p.y * s, p.x * s + p.y * c);
-}
-
-float smin(float a, float b, float k) {
-  k *= 2.0;
-  float x = b - a;
-  return 0.5 * (a + b - sqrt(x * x + k * k));
 }
 
 // MATRICES

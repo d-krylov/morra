@@ -8,9 +8,22 @@
 
 #define MAP(p) map(p)
 
+float cube_fractal(vec3 p, float size, float radius, float size_divisor, float radius_divisor, int iterations) {
+  float result = sd_sphere(p, radius);
+  for (int i = 0; i < iterations; i++) {
+    p = abs(p);
+    p -= vec3(size);
+    radius /= radius_divisor;
+    result = min(sd_sphere(p, radius), result);
+    size /= size_divisor;
+  }
+  return result;
+}
+
 vec2 map(vec3 p) {
-  
-  return vec2(menger, 0.0);
+  p.xz *= rotate(iTime);
+  float cube = cube_fractal(p, 16.0, 4.0, 3.0, 2.0, 8);
+  return vec2(cube, 0.0);
 }
 
 #include "common/march.frag"
@@ -20,7 +33,7 @@ void mainImage(out vec4 out_color, in vec2 in_position) {
   vec3 color = vec3(0.0);
 
   Ray ray;
-  ray.origin = vec3(0.0, 10.0, 15.0);
+  ray.origin = vec3(0.0, 0.0, 64.0);
   ray.direction = normalize(vec3(uv, -1.0));
 
   Hit hit = march(ray, 0.0, FAR, STEP_SIZE, STEP_COUNT);

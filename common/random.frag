@@ -13,6 +13,10 @@ float hash(vec3 p) {
   return fract(sin(dot(p, vec3(12.9898, 78.233, 37.119))) * 43758.5453123);
 }
 
+vec2 hash22(vec2 p) {
+  return fract(sin(p * vec2(37.1331, 59.7257)) * 113829.5453123);
+}
+
 // https://blog.demofox.org/2020/05/25/casual-shadertoy-path-tracing-1-basic-camera-diffuse-emissive/
 
 uint wang_hash(inout uint seed) {

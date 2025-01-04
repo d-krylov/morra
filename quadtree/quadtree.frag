@@ -1,4 +1,5 @@
 #define STEPS 5.0
+#include "common/distance.frag"
 
 void mainImage(out vec4 out_color, in vec2 in_position) {
 	vec2 uv = (2.0 * in_position - iResolution.xy) / iResolution.x;
@@ -12,9 +13,9 @@ void mainImage(out vec4 out_color, in vec2 in_position) {
     color.x += float(2 * (i % 2) - 1) * step(length(a) - 0.5, 0.0);
   }
 
+  float d = smoothstep(0.5, 0.0, sd_box(uv, vec2(0.1, 0.3)));
 
-
-
+  color.x = d;
 
 
   out_color = vec4(color, 1.0);

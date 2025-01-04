@@ -1,4 +1,5 @@
 #include "common/nature.frag"
+#include "common/random.frag"
 
 #define STEP_SIZE     0.5
 #define STEP_COUNT    2000
@@ -7,13 +8,34 @@
 
 #define MAP(p) map(p)
 
+
+float tree(vec3 p, float r, float h, vec3 offsets) {
+  float tree = sd_capsule(p, r, h);
+  float offset;
+  for (int i = 0; i < 2; i++) {
+    //offset = (p.x < 0.0) ? 0.2 * h: 0.8 * h;
+    p.xz *= rotate(PI / 4.0);
+    if (p.x < 0.0 && p.z < 0.0) offset = 0.2 * h;
+    if (p.x < 0.0 && p.z > 0.0) offset = 0.4 * h;
+    if (p.x > 0.0 && p.z < 0.0) offset = 0.6 * h;
+    if (p.x > 0.0 && p.z > 0.0) offset = 0.8 * h;
+    p.y -= offset;
+    p.xz = abs(p.xz);
+    p.xy *= rotate(PI / 4.0);
+    h /= 1.5;
+    r /= 1.5;
+    p = p.yxz;
+    float branch = sd_capsule(p, r, h);
+    tree = min(tree, branch);
+  }
+  return tree;
+}
+
+
 vec2 map(vec3 p) {
   p.xz *= rotate(iTime);
-  float r = 0.2;
-  float h = 3.0;
-  float n = 5.0;
-  vec2 tree = pythagoras_tree(p, r, h, n, PI / 7.0, 5);
-  return tree;
+  float t = tree(p, 0.3, 10.0, vec3(0.3, 0.5, 0.7));
+  return vec2(t, 0.0);
 }
 
 #include "common/march.frag"

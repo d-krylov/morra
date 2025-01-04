@@ -78,7 +78,7 @@ vec2 map(vec3 p) {
 
   vec2 q = house(p - vec3(0.0, 11.5, 0.0), vec3(5.0, 5.0, 5.0), vec3(1.0, 1.0, 1.0), vec2(0.5, 0.5));
 
-  vec2 ret = MIN(yard, q);
+  vec2 ret = min_object(yard, q);
 
   return ret;
 }
