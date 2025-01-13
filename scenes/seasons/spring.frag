@@ -43,7 +43,7 @@ vec2 tree(vec3 p, float r, float h, float n) {
   for (int i = 0; i < 3; i++) {
     float xz = repeat_angle(p.xz, n);
     float id = get_angle_id(p.xz, n);
-    float random = 0.5;// hash(id);
+    float random = 0.5; //hash(id);
     p.y -= mix(0.5 * h, h, random);
     p.xz *= rotate(xz + PI / n);
     p.xy *= rotate(PI / 4.0);

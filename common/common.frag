@@ -40,11 +40,21 @@ mat2 rotate(float a) {
   return mat2(cos(a), sin(a), -sin(a), cos(a));
 }
 
+vec2 rotate(vec2 p, float a) {
+  float c = cos(a);
+  float s = sin(a);
+  return vec2(p.x * c - p.y * s, p.x * s + p.y * c);
+}
+
 mat2 rotate_tangent(float atg) {
   float sn = atg / sqrt(1.0 + atg * atg);
   float cs = 1.0 / sqrt(1.0 + atg * atg);
   return mat2(cs, sn, -sn, cs);
 }
+
+// DOMAIN REPETITION
+
+// https://iquilezles.org/articles/sdfrepetition/
 
 float get_angle_id(vec2 p, float n) {
   float sp = 2.0 * PI / n;
@@ -57,12 +67,6 @@ float repeat_angle(vec2 p, float n) {
   float an = atan(p.y, p.x);
   float id = floor(an / sp);
   return sp * id;
-}
-
-vec2 rotate(vec2 p, float a) {
-  float c = cos(a);
-  float s = sin(a);
-  return vec2(p.x * c - p.y * s, p.x * s + p.y * c);
 }
 
 // MATRICES
